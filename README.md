@@ -2,10 +2,6 @@
 
 AI emotional companion app built with TypeScript, Next.js, React, GSAP and Gemini API.
 
-## Live Demo
-
-https://mindquest-rho.vercel.app
-
 ## GitHub Repository
 
 https://github.com/Chunjian0/mindquest
