@@ -51,7 +51,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
     <div className="app-shell">
       {!hideNav && (
         <nav>
-          <div className="nav-logo">Mochi ✦</div>
+          <div className="nav-logo">MindQuest</div>
           <div className="nav-tabs">
             {[
               { href: '/', label: '🏠 Home' },
