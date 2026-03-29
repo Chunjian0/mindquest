@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MindQuest 🌙
 
-## Getting Started
+AI emotional companion app built with TypeScript, Next.js, React, GSAP and Gemini API.
 
-First, run the development server:
+## Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+https://mindquest-rho.vercel.app
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## GitHub Repository
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+https://github.com/Chunjian0/mindquest
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+* Emotion-aware AI dialogue using Gemini API
+* Dynamic pet interaction with mood-reactive animation
+* Persistent trust, energy, EXP and coin systems
+* Quest map with unlockable regions and timed journeys
+* Companion switching and progression system
+* Daily shop reset and reward mechanics
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* TypeScript
+* Next.js
+* React
+* GSAP
+* Gemini API
+* LocalStorage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Current Development
 
-## Deploy on Vercel
+* Supabase integration (planned)
+* User authentication
+* Cloud save system
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Screenshots
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+![Welcome Screen]
+<img width="1920" height="995" alt="Screenshot (72)" src="https://github.com/user-attachments/assets/b5764d3e-1e2b-476d-85b2-a9f2c22fc491" />
+
+![Selection Pet]
+<img width="1920" height="991" alt="Screenshot (73)" src="https://github.com/user-attachments/assets/88e3e550-5aa3-476c-bd6b-edecf82ac5f1" />
+
+![Home Screen]
+<img width="1920" height="990" alt="Screenshot (74)" src="https://github.com/user-attachments/assets/e242ab3a-14fc-4604-a7fe-05a33aa9dce5" />
+
+![Pet System]
+<img width="1920" height="1009" alt="Screenshot (75)" src="https://github.com/user-attachments/assets/351e9e1c-2bcd-4ac6-b548-28e78294a34b" />
+
+![Quest System]
+<img width="1920" height="976" alt="Screenshot (76)" src="https://github.com/user-attachments/assets/3e3b5353-c9ea-42fe-9451-f43bf3ca827e" />
+
+
+![Shop System]
+<img width="1920" height="989" alt="Screenshot (77)" src="https://github.com/user-attachments/assets/022fb25f-e652-43d1-ae0d-eae121a8fc4d" />
+
+
+
+
+
+
+
