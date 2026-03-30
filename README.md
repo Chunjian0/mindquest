@@ -29,6 +29,8 @@ https://github.com/Chunjian0/mindquest
 * Supabase integration (planned)
 * User authentication
 * Cloud save system
+* Improving responsive design across different devices
+* Enhancing cross-platform compatibility
 
 ## Screenshots
 
