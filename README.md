@@ -2,10 +2,6 @@
 
 AI emotional companion app built with TypeScript, Next.js, React, GSAP and Gemini API.
 
-## Live Demo
-
-https://mindquest-rho.vercel.app
-
 ## GitHub Repository
 
 https://github.com/Chunjian0/mindquest
@@ -43,16 +39,16 @@ https://github.com/Chunjian0/mindquest
 <img width="1920" height="991" alt="Screenshot (73)" src="https://github.com/user-attachments/assets/88e3e550-5aa3-476c-bd6b-edecf82ac5f1" />
 
 [Home Screen]
-<img width="1920" height="990" alt="Screenshot (74)" src="https://github.com/user-attachments/assets/e242ab3a-14fc-4604-a7fe-05a33aa9dce5" />
+<img width="1920" height="987" alt="Screenshot (79)" src="https://github.com/user-attachments/assets/bf047a1d-ffba-4788-959b-54507938b3a6" />
 
 [Pet System]
-<img width="1920" height="1009" alt="Screenshot (75)" src="https://github.com/user-attachments/assets/351e9e1c-2bcd-4ac6-b548-28e78294a34b" />
+<img width="1920" height="987" alt="Screenshot (80)" src="https://github.com/user-attachments/assets/760bac97-6dd1-425c-b2ea-7ed606669814" />
 
 [Quest System]
-<img width="1920" height="976" alt="Screenshot (76)" src="https://github.com/user-attachments/assets/3e3b5353-c9ea-42fe-9451-f43bf3ca827e" />
+<img width="1920" height="983" alt="Screenshot (81)" src="https://github.com/user-attachments/assets/2777f7b1-1288-48d7-8013-afdd166bbdd1" />
 
 [Shop System]
-<img width="1920" height="989" alt="Screenshot (77)" src="https://github.com/user-attachments/assets/022fb25f-e652-43d1-ae0d-eae121a8fc4d" />
+<img width="1920" height="980" alt="Screenshot (82)" src="https://github.com/user-attachments/assets/29d42ae8-cde0-4d32-aaf5-8a6648f0c64e" />
 
 
 
