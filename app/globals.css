@@ -835,8 +835,6 @@ main {
   }
 }
 
-.quest-body {}
-
 .quest-label {
   font-size: 10px;
   font-weight: 800;
@@ -1526,101 +1524,116 @@ main > * {
 }
 
 /* ══════════════════════════════════════════════
-   phone version
+   移动端响应式
 ══════════════════════════════════════════════ */
-
-@media (max-width: 640px) {
-
-  nav {
-    padding:    0 12px;
-    height:     56px;
-  }
-
-  .nav-logo {
-    font-size: 16px;
-  }
-
-  .nav-tab {
-    font-size:  11px;
-    padding:    6px 8px;
-    gap:        3px;
-  }
-
-  .coin-display {
-    font-size: 13px;
-    padding:   4px 10px;
-  }
-
-  .home-layout {
-    flex-direction: column !important;
-    gap:            10px   !important;
-    overflow-y:     auto   !important;
-    overflow-x:     hidden !important;
-  }
-
-  .pet-stage-wrapper {
-    width:  100%   !important;
-    height: 240px  !important;
-  }
-
-  .chat-wrapper {
-    flex:      1    !important;
-    min-height: 0   !important;
-  }
-
-  .msg {
-    font-size:  13px !important;
-    padding:    8px 12px !important;
-    max-width:  88% !important;
-  }
-
-  .quest-card {
-    padding: 10px 12px !important;
-  }
-
-  .quest-text {
-    font-size: 13px !important;
-  }
-
-  .chat-input {
-    font-size: 14px !important;   
-  }
-
-  .world-map-container {
-    height: 200px !important;
-  }
-
-  .shop-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .pets-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .stat-row {
-    flex-direction: row  !important;
-    gap:            6px  !important;
-  }
-}
-
-@media (min-width: 641px) and (max-width: 1024px) {
-  .nav-tab {
-    font-size: 12px;
-    padding:   6px 10px;
-  }
-}
 
 html, body {
   overscroll-behavior: none;
 }
-
 * {
   touch-action: manipulation;
 }
-
 .app-shell {
-  padding-top:    env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-top:    max(env(safe-area-inset-top), 0px);
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
 }
 
+@media (max-width: 640px) {
+
+  /* ── 显示汉堡按钮，隐藏桌面 tabs ── */
+  .hamburger-btn {
+    display: flex !important;
+  }
+  .desktop-tabs {
+    display: none !important;
+  }
+  .mobile-menu {
+    display: flex !important;
+  }
+
+  /* ── Nav 缩小 ── */
+  nav {
+    padding: 0 12px;
+    height:  52px;
+  }
+  .nav-logo {
+    font-size: 14px;
+  }
+  .coin-display {
+    font-size: 12px;
+    padding:   3px 8px;
+  }
+
+  /* ── Home 布局变竖向 ── */
+  .home-layout {
+    flex-direction: column !important;
+    overflow-y:     auto   !important;
+    overflow-x:     hidden !important;
+    gap:            10px   !important;
+  }
+
+  /* ── PetStage 手机版高度 ── */
+  .pet-stage-wrapper {
+    width:      100%  !important;
+    height:     200px !important;
+    flex-shrink: 0    !important;
+  }
+
+  /* ── PetStage 内部猫咪缩小 ── */
+  .pet-stage-wrapper .pet-stage {
+    padding: 10px 12px 10px !important;
+  }
+
+  /* ── ChatBox ── */
+  .chat-wrapper {
+    flex:       1      !important;
+    height:     auto   !important;
+    min-height: 320px  !important;
+  }
+
+  /* ── 消息 ── */
+  .msg {
+    font-size: 13px !important;
+    padding:   8px 12px !important;
+    max-width: 90% !important;
+  }
+
+  /* ── 输入框（防 iOS 缩放）── */
+  .chat-input {
+    font-size: 16px !important;
+  }
+
+  /* ── Quest 卡片 ── */
+  .quest-card {
+    padding: 10px 12px !important;
+  }
+  .quest-text {
+    font-size: 13px !important;
+  }
+  .reward-chip {
+    font-size: 11px !important;
+    padding:   3px 8px !important;
+  }
+
+  /* ── Shop / Pets 单列 ── */
+  .shop-grid,
+  .pets-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── 世界地图 ── */
+  .world-map-container {
+    height: 200px !important;
+  }
+
+  /* ── Stat bars ── */
+  .stat-row {
+    gap: 5px !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .pet-stage-wrapper {
+    height: 170px !important;
+  }
+}
