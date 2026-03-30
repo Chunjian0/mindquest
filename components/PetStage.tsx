@@ -257,19 +257,18 @@ export default function PetStage({
   }, [level])
 
   return (
-    <div
+<div
       ref={stageRef}
-      className="pet-stage"
       style={{
         height: '100%',
-        boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        padding: '16px 14px 12px',
-        background: 'linear-gradient(160deg, #0e0c1e 0%, #13102a 50%, #0a0816 100%)',
-        border: '1.5px solid rgba(100,80,160,0.2)',
+        padding: '16px 14px',
+        background: 'linear-gradient(180deg, #15122c 0%, #100d24 55%, #0a0818 100%)',
         borderRadius: '20px',
+        border: '1px solid rgba(140,100,220,0.18)',
+        boxShadow: 'inset 0 0 30px rgba(140,90,255,0.08)',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -340,10 +339,25 @@ export default function PetStage({
       )}
 
       {/* Stat bars */}
-      <div className="stat-row" style={{ display: 'flex', gap: '8px', width: '100%', zIndex: 2, marginTop: 'auto', paddingTop: '6px' }}>
-        <StatBar label="EXP" value={exp} max={expMax} type="exp" barRef={expRef} />
-        <StatBar label="Trust" value={trust} max={100} type="trust" barRef={trustRef} />
-        <StatBar label="Energy" value={energy} max={100} type="energy" barRef={energyRef} />
+      <div
+        className="stat-panel"
+        style={{
+          width: '100%',
+          marginTop: '12px',
+          padding: '10px 8px',
+          borderRadius: '14px',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(140,100,220,0.12)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          zIndex: 2,
+        }}
+      >
+        <GameStatBar label="EXP" value={exp} max={expMax} type="exp" barRef={expRef} />
+        <GameStatBar label="TRUST" value={trust} max={100} type="trust" barRef={trustRef} />
+        <GameStatBar label="ENERGY" value={energy} max={100} type="energy" barRef={energyRef} />
       </div>
 
       {/* 手机尺寸调整 */}
@@ -388,36 +402,63 @@ function spawnParticles() {
   }
 }
 
-function StatBar({ label, value, max, type, barRef }: {
-  label: string; value: number; max: number; type: string
+function GameStatBar({
+  label,
+  value,
+  max,
+  type,
+  barRef,
+}: {
+  label: string
+  value: number
+  max: number
+  type: string
   barRef: React.RefObject<HTMLDivElement | null>
 }) {
   const gradients: Record<string, string> = {
     exp: 'linear-gradient(90deg, #7c3aed, #a855f7)',
     trust: 'linear-gradient(90deg, #0891b2, #22d3ee)',
-    energy: 'linear-gradient(90deg, #b45309, #fbbf24)',
+    energy: 'linear-gradient(90deg, #d97706, #fbbf24)',
   }
+
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '3px' }}>
-      <div style={{
-        display: 'flex', justifyContent: 'space-between',
-        fontSize: '9px', fontWeight: 800,
-        color: 'rgba(140,120,180,0.7)', textTransform: 'uppercase', letterSpacing: '0.06em',
-      }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: '10px',
+          fontWeight: 800,
+          letterSpacing: '0.08em',
+          color: 'rgba(200,180,240,0.85)',
+          fontFamily: "'Fredoka One', cursive",
+        }}
+      >
         <span>{label}</span>
-        <span style={{ fontFamily: "'Fredoka One', cursive", color: 'rgba(200,180,240,0.8)', fontSize: '10px' }}>
-          {value}
+        <span style={{ fontSize: '9px', opacity: 0.8 }}>
+          {value}/{max}
         </span>
       </div>
-      <div style={{
-        height: '5px', background: 'rgba(255,255,255,0.05)',
-        borderRadius: '10px', overflow: 'hidden',
-      }}>
-        <div ref={barRef} style={{
-          width: `${(value / max) * 100}%`, height: '100%',
-          background: gradients[type] || gradients.exp,
-          borderRadius: '10px', opacity: 0.75,
-        }} />
+
+      <div
+        style={{
+          height: '8px',
+          background: 'rgba(255,255,255,0.06)',
+          borderRadius: '999px',
+          overflow: 'hidden',
+          border: '1px solid rgba(255,255,255,0.04)',
+        }}
+      >
+        <div
+          ref={barRef}
+          style={{
+            width: `${(value / max) * 100}%`,
+            height: '100%',
+            background: gradients[type],
+            borderRadius: '999px',
+            boxShadow: `0 0 8px rgba(255,255,255,0.15)`,
+          }}
+        />
       </div>
     </div>
   )
