@@ -232,7 +232,9 @@ export default function AdventurePage() {
 
       {/* ── 世界地图外层容器 ── */}
       {/* 外层 overflow:visible 让 tooltip 可以超出 */}
-      <div style={{
+      <div 
+      className="world-map-container"
+      style={{
         position: 'relative',
         height: '300px',
         flexShrink: 0,

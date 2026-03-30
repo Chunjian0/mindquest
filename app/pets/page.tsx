@@ -89,7 +89,8 @@ export default function PetsPage() {
       </div>
 
       {/* Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+      <div className="pets-grid"
+      style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
         {PETS.map(pet => {
           const rarity     = RARITY_COLORS[pet.rarity]
           const trait      = PET_TRAITS[pet.id]

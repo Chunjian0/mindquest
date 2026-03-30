@@ -21,18 +21,15 @@ export default function HomePage() {
   const [bubble,     setBubble]     = useState<string | undefined>()
   const [returnDays, setReturnDays] = useState(0)
   const [toast,      setToast]      = useState<{ icon: string; label: string; value: string } | null>(null)
-  const [ready,      setReady]      = useState(false)   // AppLoader 控制
-  const [routed,     setRouted]     = useState(false)   // 防止内容闪烁
+  const [ready,      setReady]      = useState(false)
+  const [routed,     setRouted]     = useState(false)
 
   const activePet = PETS.find(p => p.id === state.activePet) || PETS[0]
 
   useEffect(() => {
-    // gameContext hydrate 完成后才检查
-    // GameProvider 里 hydrated 后 state 会有正确值
     const timer = setTimeout(() => {
       if (!state.hasOnboarded) {
         router.replace('/welcome')
-        // 不设 ready，让 loader 继续显示直到跳转完成
       } else {
         setRouted(true)
         setReady(true)
@@ -75,10 +72,8 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Loader — ready 前全屏覆盖，防止闪烁 */}
       <AppLoader ready={ready} />
 
-      {/* 主内容 — 只在 routed 后渲染，防止未授权内容闪现 */}
       {routed && (
         <div style={{
           display:       'flex',
@@ -89,6 +84,8 @@ export default function HomePage() {
           overflow:      'hidden',
           boxSizing:     'border-box',
         }}>
+
+          {/* 回归 Banner */}
           {returnDays >= 1 && (
             <div className="return-banner" style={{ flexShrink: 0 }}>
               <div className="banner-emoji">{activePet.emoji}</div>
@@ -105,8 +102,25 @@ export default function HomePage() {
 
           <EnergyStatus />
 
-          <div style={{ display: 'flex', gap: '14px', flex: 1, minHeight: 0 }}>
-            <div style={{ width: '300px', flexShrink: 0, height: '100%' }}>
+          {/* ── 主体布局 ── */}
+          <div
+            className="home-layout"
+            style={{
+              display:   'flex',
+              gap:       '14px',
+              flex:      1,
+              minHeight: 0,
+            }}
+          >
+            {/* 左边 — 宠物 */}
+            <div
+              className="pet-stage-wrapper"
+              style={{
+                width:     '300px',
+                flexShrink: 0,
+                height:    '100%',
+              }}
+            >
               <PetStage
                 name={activePet.name}
                 emoji={(activePet as any).emoji || '🐱'}
@@ -120,7 +134,16 @@ export default function HomePage() {
                 energy={state.energy}
               />
             </div>
-            <div style={{ flex: 1, height: '100%', minWidth: 0 }}>
+
+            {/* 右边 — 聊天 */}
+            <div
+              className="chat-wrapper"
+              style={{
+                flex:     1,
+                height:   '100%',
+                minWidth: 0,
+              }}
+            >
               <ChatBox
                 onEmotionDetected={handleEmotion}
                 onRewardGiven={handleReward}
@@ -132,6 +155,43 @@ export default function HomePage() {
           <RewardToast toast={toast} />
         </div>
       )}
+
+      {/* responsive */}
+      <style>{`
+
+        /* ── 手机竖屏 ── */
+        @media (max-width: 640px) {
+
+          /* Home 布局改竖向堆叠 */
+          .home-layout {
+            flex-direction: column !important;
+            overflow-y:     auto   !important;
+            overflow-x:     hidden !important;
+            gap:            10px   !important;
+          }
+
+          /* PetStage 手机上固定高度，不要占太多 */
+          .pet-stage-wrapper {
+            width:      100%  !important;
+            height:     220px !important;
+            flex-shrink: 0    !important;
+          }
+
+          /* ChatBox 撑满剩余空间 */
+          .chat-wrapper {
+            flex:        1      !important;
+            height:      auto   !important;
+            min-height:  300px  !important;
+          }
+        }
+
+        /* ── 超小屏（iPhone SE等）── */
+        @media (max-width: 375px) {
+          .pet-stage-wrapper {
+            height: 180px !important;
+          }
+        }
+      `}</style>
     </>
   )
 }

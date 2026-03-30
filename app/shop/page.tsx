@@ -113,7 +113,9 @@ export default function ShopPage() {
       </div>
 
       {/* Shop grid */}
-      <div style={{
+      <div 
+      className="shop-grid"
+      style={{
         display:             'grid',
         gridTemplateColumns: 'repeat(2, 1fr)',
         gap:                 '10px',
