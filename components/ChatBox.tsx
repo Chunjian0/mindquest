@@ -12,6 +12,7 @@ import {
   playHappySound, playSadSound, playAnxiousSound,
 } from '@/lib/soundSystem'
 import type { Reward } from '@/lib/rewardSystem'
+import type { PetId } from '@/lib/catLanguage'
 
 interface Message {
   id: number
@@ -172,7 +173,7 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
       text,
       currentMood,
       state.trust,
-      activePet.id,          // ← 加这个
+      activePet.id as PetId,          // ← 加这个
       msgCountRef.current,
       lastAIRef.current,
     )
@@ -208,7 +209,7 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
 
         if (data.rateLimited) {
           // 限流时用猫语兜底
-          const fallback = getCombinedCatResponse(activePet.id, 'idle', state.trust, 'chat_reply')
+          const fallback = getCombinedCatResponse(activePet.id as PetId, 'idle', state.trust, 'chat_reply')
           addMsg({ type: 'cat', text: fallback.sounds.join('  '), catSounds: fallback.sounds, catTrans: fallback.translation })
         } else {
           const emotion = data.emotion || 'default'
