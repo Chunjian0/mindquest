@@ -29,6 +29,8 @@ https://github.com/Chunjian0/mindquest
 * Supabase integration (planned)
 * User authentication
 * Cloud save system
+* Improving responsive design across different devices
+* Enhancing cross-platform compatibility
 
 ## Screenshots
 
@@ -39,7 +41,7 @@ https://github.com/Chunjian0/mindquest
 <img width="1920" height="991" alt="Screenshot (73)" src="https://github.com/user-attachments/assets/88e3e550-5aa3-476c-bd6b-edecf82ac5f1" />
 
 [Home Screen]
-<img width="1920" height="987" alt="Screenshot (79)" src="https://github.com/user-attachments/assets/bf047a1d-ffba-4788-959b-54507938b3a6" />
+<img width="1920" height="996" alt="Screenshot (86)" src="https://github.com/user-attachments/assets/057f7389-3074-4109-9e8d-7091716294d4" />
 
 [Pet System]
 <img width="1920" height="987" alt="Screenshot (80)" src="https://github.com/user-attachments/assets/760bac97-6dd1-425c-b2ea-7ed606669814" />
