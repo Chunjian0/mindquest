@@ -1,17 +1,33 @@
-export type PetId = 'mochi' | 'shiba' | 'white-fox' | string
+export const PET_PERSONALITY = {
+  mochi: 'I understand quietly.',
+  shiba: 'I stay beside you.',
+  'white-fox': 'I noticed what you didn\'t say.',
+}
+
+export type PetId = keyof typeof PET_PERSONALITY
+
+export type Mood =
+  | 'idle'
+  | 'happy'
+  | 'sad'
+  | 'anxious'
+  | 'calm'
+
+export type MoodKey = Mood | 'default'
+
+export type CatCategory =
+  | 'greeting'
+  | 'comfort'
+  | 'anxious'
+  | 'happy'
+  | 'lonely'
+  | 'rare'
 
 export interface CatWord {
   sound: string
-  translation: Record<string, string>
-  category: 'greeting' | 'comfort' | 'anxious' | 'happy' | 'lonely' | 'rare'
+  translation: Partial<Record<MoodKey, string>>
+  category: CatCategory
   minTrust: number
-}
-
-// ── 三宠物的性格标签 ──────────────────────────
-export const PET_PERSONALITY: Record<string, string> = {
-  'mochi': 'I understand quietly.',
-  'shiba': 'I stay beside you.',
-  'white-fox': 'I noticed what you didn\'t say.',
 }
 
 // ══════════════════════════════════════════════
@@ -571,7 +587,7 @@ function getVocabulary(petId: PetId): CatWord[] {
 }
 
 // ── 上下文 → 类别映射 ─────────────────────────
-function getMoodCategory(mood: string): string[] {
+function getMoodCategory(mood: Mood): CatCategory[] {
   switch (mood) {
     case 'happy': return ['happy', 'greeting']
     case 'sad': return ['comfort', 'lonely']
@@ -584,20 +600,20 @@ function getMoodCategory(mood: string): string[] {
 export interface CatMessage {
   sound: string
   translation: string
-  category: string
+  category: CatCategory
 }
 
 // ── 主函数：获取回应 ──────────────────────────
 export function getCatResponse(
   petId: PetId,
-  mood: string,
+  mood: Mood,
   trust: number,
   context: 'chat_reply' | 'greeting' | 'long_absence' | 'quest_complete' | 'level_up' | 'low_energy' | 'tap',
 ): CatMessage {
   const vocab = getVocabulary(petId)
   const available = vocab.filter(w => w.minTrust <= trust)
 
-  const contextMap: Record<string, string[]> = {
+  const contextMap: Record<string, CatCategory[]> = {
     chat_reply: getMoodCategory(mood),
     greeting: ['greeting'],
     long_absence: ['lonely'],
@@ -608,11 +624,16 @@ export function getCatResponse(
   }
 
   const preferredCats = contextMap[context] || ['greeting']
-  let pool = available.filter(w => preferredCats.includes(w.category))
-  if (pool.length === 0) pool = available
-  if (pool.length === 0) pool = vocab  // 最终兜底
+let pool = available.filter(w => preferredCats.includes(w.category))
 
-  // 避免重复：优先选择不同类别
+if (trust >= 60) {
+  const rareWords = available.filter(w => w.category === 'rare')
+  pool = [...pool, ...rareWords]
+}
+
+if (pool.length === 0) pool = available
+if (pool.length === 0) pool = vocab
+  //avoid for similiar error
   const chosen = pool[Math.floor(Math.random() * pool.length)]
 
   return {
@@ -625,7 +646,7 @@ export function getCatResponse(
 // ── 获取组合回应（偶尔两个词）────────────────
 export function getCombinedCatResponse(
   petId: PetId,
-  mood: string,
+  mood: Mood,
   trust: number,
   context: 'chat_reply' | 'greeting' | 'long_absence' | 'quest_complete' | 'level_up' | 'low_energy' | 'tap',
 ): { sounds: string[]; translation: string } {

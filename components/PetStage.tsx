@@ -402,7 +402,7 @@ function spawnParticles() {
   }
 }
 
-// ──StatBar ──────────────────────
+// ── 像素游戏风格 StatBar（MindQuest 主题）──────
 function GameStatBar({
   label,
   value,
@@ -416,166 +416,198 @@ function GameStatBar({
   type:   string
   barRef: React.RefObject<HTMLDivElement | null>
 }) {
-  const TOTAL_CELLS = 14
+  const TOTAL_CELLS = 12
   const filledCount = Math.round((value / max) * TOTAL_CELLS)
   const pct         = Math.round((value / max) * 100)
 
-  // 颜色配置
   const config: Record<string, {
-    icon:        string
-    labelColor:  string
-    fillGrad:    string
-    glowColor:   string
-    shimmer:     string
-    isLow?:      boolean
+    icon:       string
+    labelColor: string
+    fillColor:  string          // 方块主色
+    fillShade:  string          // 方块暗色（右侧/底部）
+    emptyColor: string          // 空格子颜色
+    borderColor: string         // 外框颜色
+    glowColor:  string
+    isLow?:     boolean
   }> = {
     exp: {
-      icon:       '⚡',
-      labelColor: 'rgba(192,132,252,0.85)',
-      fillGrad:   'linear-gradient(180deg, #c084fc 0%, #7c3aed 100%)',
-      glowColor:  'rgba(168,85,247,0.6)',
-      shimmer:    'rgba(255,255,255,0.22)',
+      icon:        '★',
+      labelColor:  '#d580ff',
+      fillColor:   '#c84cff',
+      fillShade:   '#7a1cbf',
+      emptyColor:  '#1e1430',
+      borderColor: '#6b21a8',
+      glowColor:   'rgba(200,76,255,0.5)',
     },
     trust: {
-      icon:       '💙',
-      labelColor: 'rgba(34,211,238,0.85)',
-      fillGrad:   'linear-gradient(180deg, #22d3ee 0%, #0891b2 100%)',
-      glowColor:  'rgba(34,211,238,0.6)',
-      shimmer:    'rgba(255,255,255,0.2)',
+      icon:        '♥',
+      labelColor:  '#4dd9f5',
+      fillColor:   '#22c8e8',
+      fillShade:   '#0e6ea8',
+      emptyColor:  '#0e1e2a',
+      borderColor: '#0e7490',
+      glowColor:   'rgba(34,200,232,0.5)',
     },
     energy: {
-      icon:       '🔥',
-      labelColor: value > 20
-        ? 'rgba(251,191,36,0.85)'
-        : 'rgba(239,68,68,0.95)',
-      fillGrad:   value > 50
-        ? 'linear-gradient(180deg, #fbbf24 0%, #d97706 100%)'
-        : value > 20
-          ? 'linear-gradient(180deg, #f59e0b 0%, #b45309 100%)'
-          : 'linear-gradient(180deg, #ef4444 0%, #991b1b 100%)',
-      glowColor:  value > 20
-        ? 'rgba(251,191,36,0.6)'
-        : 'rgba(239,68,68,0.7)',
-      shimmer:    'rgba(255,255,255,0.2)',
-      isLow:      value <= 20,
+      icon:        '◆',
+      labelColor:  value > 20 ? '#ffd24d' : '#ff5555',
+      fillColor:   value > 50
+        ? '#ffcc00'
+        : value > 20 ? '#e8890a' : '#ff3333',
+      fillShade:   value > 50
+        ? '#cc7700'
+        : value > 20 ? '#994400' : '#991111',
+      emptyColor:  '#1a1408',
+      borderColor: value > 20 ? '#854d0e' : '#7f1d1d',
+      glowColor:   value > 20 ? 'rgba(255,204,0,0.5)' : 'rgba(255,51,51,0.6)',
+      isLow:       value <= 20,
     },
   }
 
   const cfg = config[type] || config.exp
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
 
-      {/* 标签行 */}
+      {/* 标签行 — 像素字体感 */}
       <div style={{
         display:        'flex',
         justifyContent: 'space-between',
         alignItems:     'center',
       }}>
-        <div style={{
+        <span style={{
+          fontFamily:    "'Courier New', 'Press Start 2P', monospace",
+          fontSize:      '9px',
+          fontWeight:    900,
+          color:         cfg.labelColor,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          textShadow:    `0 0 6px ${cfg.glowColor}`,
           display:       'flex',
           alignItems:    'center',
           gap:           '4px',
-          fontSize:      '10px',
-          fontWeight:    800,
-          color:         cfg.labelColor,
-          textTransform: 'uppercase',
-          letterSpacing: '0.12em',
-          fontFamily:    "'Courier New', monospace",
         }}>
-          <span style={{ fontSize: '11px' }}>{cfg.icon}</span>
+          <span style={{ fontSize: '10px' }}>{cfg.icon}</span>
           {label}
-          {/* 低能量警告标签 */}
           {cfg.isLow && (
             <span style={{
-              fontSize:     '8px',
-              color:        'rgba(239,68,68,0.8)',
-              background:   'rgba(239,68,68,0.1)',
-              border:       '1px solid rgba(239,68,68,0.25)',
-              borderRadius: '4px',
-              padding:      '0px 4px',
-              letterSpacing:'0.08em',
-              animation:    'lowPulse 1.2s ease-in-out infinite alternate',
+              fontSize:     '7px',
+              color:        '#ff5555',
+              background:   'rgba(255,0,0,0.1)',
+              border:       '1px solid rgba(255,0,0,0.3)',
+              borderRadius: '2px',
+              padding:      '0 3px',
+              letterSpacing:'0.1em',
+              animation:    'lowPulse 0.8s step-end infinite',
             }}>
-              LOW
+              !!
             </span>
           )}
-        </div>
+        </span>
 
-        {/* 数值 */}
-        <div style={{
+        <span style={{
           fontFamily: "'Courier New', monospace",
-          fontSize:   '11px',
+          fontSize:   '9px',
           fontWeight: 700,
-          color:      cfg.isLow
-            ? 'rgba(239,68,68,0.85)'
-            : 'rgba(200,185,240,0.7)',
+          color:      cfg.isLow ? '#ff5555' : 'rgba(180,160,220,0.65)',
+          letterSpacing: '0.05em',
         }}>
-          {value}
-          <span style={{ fontSize: '9px', opacity: 0.45, marginLeft: '1px' }}>
-            /{max}
-          </span>
-        </div>
+          {value}/{max}
+        </span>
       </div>
 
-      {/* 像素格进度条 */}
+      {/* 像素进度条容器 — 粗边框 */}
       <div style={{
-        display:    'flex',
-        gap:        '2.5px',
-        alignItems: 'center',
-        height:     '12px',
+        position:    'relative',
+        padding:     '3px',
+        borderRadius:'3px',
+        background:  'rgba(0,0,0,0.6)',
+        // 双层边框：外层深色 + 内层亮边（像素风格）
+        border:       `2px solid ${cfg.borderColor}`,
+        boxShadow:    `
+          inset 1px 1px 0 rgba(255,255,255,0.08),
+          inset -1px -1px 0 rgba(0,0,0,0.5),
+          0 0 8px ${cfg.glowColor}
+        `,
       }}>
-        {Array.from({ length: TOTAL_CELLS }, (_, i) => {
-          const isFilled = i < filledCount
 
-          return (
-            <div
-              key={i}
-              style={{
-                flex:         1,
-                height:       '12px',
-                borderRadius: '2px',
-                position:     'relative',
-                overflow:     'hidden',
-                background:   isFilled
-                  ? cfg.fillGrad
-                  : 'rgba(255,255,255,0.05)',
-                border:       isFilled
-                  ? 'none'
-                  : '1px solid rgba(255,255,255,0.04)',
-                boxShadow:    isFilled
-                  ? `0 0 4px ${cfg.glowColor}, inset 0 -2px 0 rgba(0,0,0,0.3)`
-                  : 'none',
-                // 轻微交错动画延迟，有填满感
-                transition:   `background 0.3s ease ${i * 0.015}s, box-shadow 0.3s ease`,
-              }}
-            >
-              {/* 顶部高光（像素感）*/}
-              {isFilled && (
-                <div style={{
-                  position:     'absolute',
-                  top:          0,
-                  left:         0,
-                  right:        0,
-                  height:       '3px',
-                  background:   cfg.shimmer,
-                  borderRadius: '2px 2px 0 0',
-                }} />
-              )}
-            </div>
-          )
-        })}
+        {/* 格子行 */}
+        <div style={{
+          display: 'flex',
+          gap:     '2px',
+          height:  '10px',
+        }}>
+          {Array.from({ length: TOTAL_CELLS }, (_, i) => {
+            const isFilled = i < filledCount
+
+            return (
+              <div
+                key={i}
+                style={{
+                  flex:         1,
+                  height:       '100%',
+                  borderRadius: '1px',
+                  position:     'relative',
+                  overflow:     'hidden',
+
+                  // 填充格子 — 模拟像素风格的双色
+                  background:   isFilled
+                    ? cfg.fillColor
+                    : cfg.emptyColor,
+
+                  // 像素风阴影（右边和底部暗色）
+                  boxShadow:    isFilled
+                    ? `inset -1px -2px 0 ${cfg.fillShade}, inset 1px 1px 0 rgba(255,255,255,0.25)`
+                    : `inset 1px 1px 0 rgba(255,255,255,0.03)`,
+
+                  transition: `background 0.15s ease ${i * 0.02}s`,
+                }}
+              >
+                {/* 顶部高光条 */}
+                {isFilled && (
+                  <div style={{
+                    position:   'absolute',
+                    top:        0,
+                    left:       0,
+                    right:      0,
+                    height:     '3px',
+                    background: 'rgba(255,255,255,0.3)',
+                  }} />
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* 进度条扫描线效果 */}
+        {filledCount > 0 && (
+          <div style={{
+            position:   'absolute',
+            top:        '3px',
+            left:       '3px',
+            width:      `calc(${(filledCount / TOTAL_CELLS) * 100}% - 3px)`,
+            height:     '10px',
+            background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)`,
+            animation:  'scanline 2s linear infinite',
+            pointerEvents: 'none',
+            borderRadius: '1px',
+          }} />
+        )}
       </div>
 
-      {/* 隐藏的 div 给 GSAP 用 */}
+      {/* GSAP 隐藏 ref */}
       <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0 }}>
         <div ref={barRef} style={{ width: `${pct}%` }} />
       </div>
 
       <style>{`
         @keyframes lowPulse {
-          from { opacity: 0.6; }
-          to   { opacity: 1;   }
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0; }
+        }
+        @keyframes scanline {
+          from { transform: translateX(-100%); }
+          to   { transform: translateX(200%);  }
         }
       `}</style>
     </div>

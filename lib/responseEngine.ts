@@ -1,17 +1,17 @@
-import { getCombinedCatResponse, PetId } from './catLanguage'
+import { getCombinedCatResponse, PetId, Mood } from './catLanguage'
 
 interface ResponseDecision {
   useCatLanguage: boolean
-  catResponse?:   { sounds: string[]; translation: string }
-  reason:         string
+  catResponse?: { sounds: string[]; translation: string }
+  reason: string
 }
 
 export function decideResponseMode(
-  text:       string,
-  mood:       string,
-  trust:      number,
-  petId:      PetId,
-  msgCount:   number,
+  text: string,
+  mood: Mood,
+  trust: number,
+  petId: PetId,
+  msgCount: number,
   lastAIUsed: number,
 ): ResponseDecision {
 
@@ -20,8 +20,8 @@ export function decideResponseMode(
   if (isGreeting) {
     return {
       useCatLanguage: true,
-      catResponse:    getCombinedCatResponse(petId, mood, trust, 'greeting'),
-      reason:         'greeting',
+      catResponse: getCombinedCatResponse(petId, mood, trust, 'greeting'),
+      reason: 'greeting',
     }
   }
 
@@ -29,8 +29,8 @@ export function decideResponseMode(
   if (text.trim().length < 5) {
     return {
       useCatLanguage: true,
-      catResponse:    getCombinedCatResponse(petId, mood, trust, 'tap'),
-      reason:         'too_short',
+      catResponse: getCombinedCatResponse(petId, mood, trust, 'tap'),
+      reason: 'too_short',
     }
   }
 
@@ -38,8 +38,8 @@ export function decideResponseMode(
   if (msgCount <= 2) {
     return {
       useCatLanguage: true,
-      catResponse:    getCombinedCatResponse(petId, mood, trust, 'chat_reply'),
-      reason:         'early_warmup',
+      catResponse: getCombinedCatResponse(petId, mood, trust, 'chat_reply'),
+      reason: 'early_warmup',
     }
   }
 
@@ -47,8 +47,8 @@ export function decideResponseMode(
   if (msgCount - lastAIUsed <= 1) {
     return {
       useCatLanguage: true,
-      catResponse:    getCombinedCatResponse(petId, mood, trust, 'chat_reply'),
-      reason:         'ai_cooldown',
+      catResponse: getCombinedCatResponse(petId, mood, trust, 'chat_reply'),
+      reason: 'ai_cooldown',
     }
   }
 
@@ -57,8 +57,8 @@ export function decideResponseMode(
   if (simpleEmotions) {
     return {
       useCatLanguage: true,
-      catResponse:    getCombinedCatResponse(petId, mood, trust, 'chat_reply'),
-      reason:         'simple_emotion',
+      catResponse: getCombinedCatResponse(petId, mood, trust, 'chat_reply'),
+      reason: 'simple_emotion',
     }
   }
 
@@ -66,9 +66,9 @@ export function decideResponseMode(
   const needsAI = (
     text.length > 20 ||
     text.includes('because') || text.includes('因为') ||
-    text.includes('所以')     || text.includes('但是') ||
-    text.includes('我觉得')   || text.includes('今天') ||
-    text.includes('发生了')   || text.includes('想说') ||
+    text.includes('所以') || text.includes('但是') ||
+    text.includes('我觉得') || text.includes('今天') ||
+    text.includes('发生了') || text.includes('想说') ||
     /[.。！!?？]{2,}/.test(text)
   )
 
@@ -78,7 +78,7 @@ export function decideResponseMode(
   const useLocal = Math.random() < 0.8
   return {
     useCatLanguage: useLocal,
-    catResponse:    useLocal
+    catResponse: useLocal
       ? getCombinedCatResponse(petId, mood, trust, 'chat_reply')
       : undefined,
     reason: useLocal ? 'random_local' : 'random_ai',
