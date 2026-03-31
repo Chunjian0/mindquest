@@ -58,7 +58,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'meowww', category: 'greeting', minTrust: 10,
+    sound: 'meowww', category: 'greeting', minTrust: 0,
     translation: {
       idle: 'I kind of missed you.',
       happy: 'So happy you’re back!',
@@ -80,7 +80,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'mrrrow?', category: 'greeting', minTrust: 5,
+    sound: 'mrrrow?', category: 'greeting', minTrust: 0,
     translation: {
       idle: 'What happened today?',
       happy: 'Anything good today?',
@@ -93,7 +93,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
 
   // Comfort
   {
-    sound: 'purrr…', category: 'comfort', minTrust: 10,
+    sound: 'purrr…', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'It’s okay, I’m here.',
       happy: 'Being together is enough.',
@@ -104,7 +104,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'mmmrr…', category: 'comfort', minTrust: 20,
+    sound: 'mmmrr…', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'It’s okay to go slower.',
       happy: 'No need to rush.',
@@ -115,7 +115,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'mew...', category: 'comfort', minTrust: 5,
+    sound: 'mew...', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'Today feels quiet.',
       happy: 'Quiet is nice too.',
@@ -139,7 +139,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'tsk-meow', category: 'anxious', minTrust: 25,
+    sound: 'tsk-meow', category: 'anxious', minTrust: 0,
     translation: {
       idle: 'Don’t put too much on yourself.',
       happy: 'Relax sometimes too.',
@@ -163,7 +163,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'mewww~♪', category: 'happy', minTrust: 10,
+    sound: 'mewww~♪', category: 'happy', minTrust: 0,
     translation: {
       idle: 'Today feels nice.',
       happy: 'Today is really good!',
@@ -176,7 +176,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
 
   // Lonely
   {
-    sound: 'meow...', category: 'lonely', minTrust: 5,
+    sound: 'meow...', category: 'lonely', minTrust: 0,
     translation: {
       idle: 'You came back a little late today.',
       happy: 'Finally, I waited for you.',
@@ -187,7 +187,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'mew mew', category: 'lonely', minTrust: 10,
+    sound: 'mew mew', category: 'lonely', minTrust: 0,
     translation: {
       idle: 'I want to stay with you for a while.',
       happy: 'It’s nice being together.',
@@ -200,7 +200,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
 
   // Rare
   {
-    sound: 'purrrrrr', category: 'rare', minTrust: 60,
+    sound: 'purrrrrr', category: 'rare', minTrust: 0,
     translation: {
       idle: 'I know you’ve held on for a long time.',
       happy: 'You’ve really worked hard.',
@@ -211,7 +211,7 @@ const MOCHI_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'soft meow...', category: 'rare', minTrust: 80,
+    sound: 'soft meow...', category: 'rare', minTrust: 0,
     translation: {
       idle: 'You don’t have to explain.',
       happy: 'You don’t need to say anything, I understand.',
@@ -243,14 +243,14 @@ const SHIBA_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'ruff?', category: 'greeting', minTrust: 5,
+    sound: 'ruff?', category: 'greeting', minTrust: 0,
     translation: {
       idle: 'How was today?', happy: 'Good day?',
       sad: 'Something happen?', anxious: 'You okay?', calm: 'All good?', default: 'How was today?',
     },
   },
   {
-    sound: 'arf', category: 'greeting', minTrust: 10,
+    sound: 'arf', category: 'greeting', minTrust: 0,
     translation: {
       idle: 'I missed you a little.', happy: 'Glad you\'re back.',
       sad: 'I waited.', anxious: 'I noticed you were gone.', calm: 'Welcome back.', default: 'I missed you a little.',
@@ -265,35 +265,35 @@ const SHIBA_VOCABULARY: CatWord[] = [
   },
   // Comfort
   {
-    sound: 'whine...', category: 'comfort', minTrust: 15,
+    sound: 'whine...', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'Stay here for a moment.', happy: 'Don\'t rush off yet.',
       sad: 'Stay. Just for now.', anxious: 'Sit with me.', calm: 'Stay a little longer.', default: 'Stay here for a moment.',
     },
   },
   {
-    sound: 'soft woof', category: 'comfort', minTrust: 10,
+    sound: 'soft woof', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'You look tired.', happy: 'You look good today.',
       sad: 'You look really tired.', anxious: 'You\'re tense.', calm: 'You seem okay.', default: 'You look tired.',
     },
   },
   {
-    sound: 'hmmm-ruff', category: 'comfort', minTrust: 20,
+    sound: 'hmmm-ruff', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'No rush.', happy: 'Take your time.',
       sad: 'No rush at all.', anxious: 'Slow down.', calm: 'This is a good pace.', default: 'No rush.',
     },
   },
   {
-    sound: 'low arf', category: 'comfort', minTrust: 15,
+    sound: 'low arf', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'One step is enough.', happy: 'Keep going.',
       sad: 'One step. That\'s all.', anxious: 'Just one thing at a time.', calm: 'Good pace.', default: 'One step is enough.',
     },
   },
   {
-    sound: 'warm woof', category: 'comfort', minTrust: 25,
+    sound: 'warm woof', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'I\'m staying here.', happy: 'I\'m with you.',
       sad: 'I\'m not leaving.', anxious: 'I\'m right here.', calm: 'Still here.', default: 'I\'m staying here.',
@@ -308,14 +308,14 @@ const SHIBA_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'grr... woof', category: 'anxious', minTrust: 15,
+    sound: 'grr... woof', category: 'anxious', minTrust: 0,
     translation: {
       idle: 'Too much at once?', happy: 'Steady.',
       sad: 'That\'s a lot.', anxious: 'Too much at once.', calm: 'Okay.', default: 'Too much at once?',
     },
   },
   {
-    sound: 'sniff...', category: 'anxious', minTrust: 10,
+    sound: 'sniff...', category: 'anxious', minTrust: 0,
     translation: {
       idle: 'I can feel it too.', happy: 'All clear.',
       sad: 'I feel it.', anxious: 'I can feel it too.', calm: 'Seems fine.', default: 'I can feel it too.',
@@ -336,14 +336,14 @@ const SHIBA_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'woooof~', category: 'happy', minTrust: 10,
+    sound: 'woooof~', category: 'happy', minTrust: 0,
     translation: {
       idle: 'Today feels good!', happy: 'Best day!',
       sad: 'Tomorrow will be better.', anxious: 'It\'s going to be fine.', calm: 'Nice and easy.', default: 'Today feels good!',
     },
   },
   {
-    sound: 'tail wag wag', category: 'happy', minTrust: 5,
+    sound: 'tail wag wag', category: 'happy', minTrust: 0,
     translation: {
       idle: 'Keep going!', happy: 'Let\'s keep this up!',
       sad: 'Keep going, little by little.', anxious: 'Keep going, one step.', calm: 'Just right.', default: 'Keep going!',
@@ -351,21 +351,21 @@ const SHIBA_VOCABULARY: CatWord[] = [
   },
   // Lonely
   {
-    sound: 'woof...', category: 'lonely', minTrust: 5,
+    sound: 'woof...', category: 'lonely', minTrust: 0,
     translation: {
       idle: 'I waited here.', happy: 'You came!',
       sad: 'I waited a long time.', anxious: 'I was worried.', calm: 'You\'re back. Good.', default: 'I waited here.',
     },
   },
   {
-    sound: 'sniff... woof', category: 'lonely', minTrust: 15,
+    sound: 'sniff... woof', category: 'lonely', minTrust: 0,
     translation: {
       idle: 'Quiet for too long.', happy: 'Good to have you.',
       sad: 'It was quiet.', anxious: 'Too much silence.', calm: 'Quiet is okay.', default: 'Quiet for too long.',
     },
   },
   {
-    sound: 'soft whine', category: 'lonely', minTrust: 20,
+    sound: 'soft whine', category: 'lonely', minTrust: 0,
     translation: {
       idle: 'Stay a little longer?', happy: 'Don\'t go yet.',
       sad: 'Please stay.', anxious: 'Don\'t go.', calm: 'Stay a while.', default: 'Stay a little longer?',
@@ -422,14 +422,14 @@ const WHITE_FOX_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'hrrm?', category: 'greeting', minTrust: 5,
+    sound: 'hrrm?', category: 'greeting', minTrust: 0,
     translation: {
       idle: 'Thinking again?', happy: 'Something good?',
       sad: 'Heavy thoughts?', anxious: 'Too many things?', calm: 'Clear head today.', default: 'Thinking again?',
     },
   },
   {
-    sound: 'tsk-yip', category: 'greeting', minTrust: 10,
+    sound: 'tsk-yip', category: 'greeting', minTrust: 0,
     translation: {
       idle: 'You look distracted.', happy: 'Focused today.',
       sad: 'Something\'s off.', anxious: 'Scattered today.', calm: 'Grounded.', default: 'You look distracted.',
@@ -437,28 +437,28 @@ const WHITE_FOX_VOCABULARY: CatWord[] = [
   },
   // Comfort
   {
-    sound: 'mmm... yip', category: 'comfort', minTrust: 15,
+    sound: 'mmm... yip', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'No need to force it.', happy: 'It comes naturally.',
       sad: 'No need to force anything.', anxious: 'Don\'t push.', calm: 'Let it be.', default: 'No need to force it.',
     },
   },
   {
-    sound: 'soft hrrm', category: 'comfort', minTrust: 10,
+    sound: 'soft hrrm', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'Sit a while first.', happy: 'Settle in.',
       sad: 'Sit. Don\'t move yet.', anxious: 'Sit. Just sit.', calm: 'Good. Just be here.', default: 'Sit a while first.',
     },
   },
   {
-    sound: 'low yip', category: 'comfort', minTrust: 5,
+    sound: 'low yip', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'Quiet is allowed.', happy: 'This kind of quiet is good.',
       sad: 'Silence is fine.', anxious: 'You don\'t have to fill the silence.', calm: 'Exactly this.', default: 'Quiet is allowed.',
     },
   },
   {
-    sound: 'huff...', category: 'comfort', minTrust: 20,
+    sound: 'huff...', category: 'comfort', minTrust: 0,
     translation: {
       idle: 'Let the noise pass.', happy: 'The noise will fade.',
       sad: 'It will pass.', anxious: 'Let it pass. Don\'t hold it.', calm: 'It passed.', default: 'Let the noise pass.',
@@ -473,14 +473,14 @@ const WHITE_FOX_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'sharp yip', category: 'anxious', minTrust: 10,
+    sound: 'sharp yip', category: 'anxious', minTrust: 0,
     translation: {
       idle: 'Something is pulling at you.', happy: 'Pulled in many directions.',
       sad: 'Something is pulling hard.', anxious: 'Something is pulling at you.', calm: 'You let go.', default: 'Something is pulling at you.',
     },
   },
   {
-    sound: 'hrrm...', category: 'anxious', minTrust: 15,
+    sound: 'hrrm...', category: 'anxious', minTrust: 0,
     translation: {
       idle: 'Your mind is loud today.', happy: 'Loud, but good.',
       sad: 'Very loud today.', anxious: 'Your mind is loud today.', calm: 'Quieter now.', default: 'Your mind is loud today.',
@@ -502,21 +502,21 @@ const WHITE_FOX_VOCABULARY: CatWord[] = [
     },
   },
   {
-    sound: 'light huff', category: 'happy', minTrust: 5,
+    sound: 'light huff', category: 'happy', minTrust: 0,
     translation: {
       idle: 'That suits today.', happy: 'This fits.',
       sad: 'Something small still fits.', anxious: 'A small fit.', calm: 'Fits perfectly.', default: 'That suits today.',
     },
   },
   {
-    sound: 'quick yip-yip', category: 'happy', minTrust: 10,
+    sound: 'quick yip-yip', category: 'happy', minTrust: 0,
     translation: {
       idle: 'A small win still counts.', happy: 'That counts.',
       sad: 'Small wins exist.', anxious: 'Something worked.', calm: 'A good small thing.', default: 'A small win still counts.',
     },
   },
   {
-    sound: 'tail flick', category: 'happy', minTrust: 15,
+    sound: 'tail flick', category: 'happy', minTrust: 0,
     translation: {
       idle: 'Good enough.', happy: 'More than good.',
       sad: 'Enough for today.', anxious: 'Enough.', calm: 'More than enough.', default: 'Good enough.',
@@ -524,21 +524,21 @@ const WHITE_FOX_VOCABULARY: CatWord[] = [
   },
   // Lonely
   {
-    sound: 'soft yip...', category: 'lonely', minTrust: 10,
+    sound: 'soft yip...', category: 'lonely', minTrust: 0,
     translation: {
       idle: 'It was quiet.', happy: 'A welcome quiet.',
       sad: 'Too quiet.', anxious: 'Unsettled quiet.', calm: 'A natural quiet.', default: 'It was quiet.',
     },
   },
   {
-    sound: 'mmm...', category: 'lonely', minTrust: 5,
+    sound: 'mmm...', category: 'lonely', minTrust: 0,
     translation: {
       idle: 'You took your time.', happy: 'Worth the wait.',
       sad: 'You took a long time.', anxious: 'I wondered.', calm: 'You arrived when you were ready.', default: 'You took your time.',
     },
   },
   {
-    sound: 'low hrrm', category: 'lonely', minTrust: 15,
+    sound: 'low hrrm', category: 'lonely', minTrust: 0,
     translation: {
       idle: 'Still, you came back.', happy: 'You always come back.',
       sad: 'You still came back.', anxious: 'You found your way.', calm: 'And here you are.', default: 'Still, you came back.',

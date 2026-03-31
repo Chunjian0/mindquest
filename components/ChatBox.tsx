@@ -12,16 +12,16 @@ import {
   playHappySound, playSadSound, playAnxiousSound,
 } from '@/lib/soundSystem'
 import type { Reward } from '@/lib/rewardSystem'
-import type { PetId } from '@/lib/catLanguage'
+import type { PetId, Mood } from '@/lib/catLanguage'
 
 interface Message {
   id: number
   text: string
   type: 'user' | 'mochi' | 'system' | 'cat'
   timestamp: number
-  catSounds?: string[]          // 猫语音节
-  catTrans?: string            // 猫语翻译
-  showTrans?: boolean           // 翻译是否已显示
+  catSounds?: string[]
+  catTrans?: string
+  showTrans?: boolean
 }
 
 interface HistoryEntry { role: 'user' | 'mochi'; text: string }
@@ -80,6 +80,7 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
   const [quest, setQuest] = useState(QUESTS[0])
   const [showDate, setShowDate] = useState<number | null>(null)
   const [revealedTrans, setRevealedTrans] = useState<Set<number>>(new Set())
+  const [currentMood, setCurrentMood] = useState<Mood>('idle')
 
   const idRef = useRef(Date.now())
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -89,7 +90,10 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
   const msgCountRef = useRef(0)
   const lastAIRef = useRef(-10)
 
+  // 保存消息
   useEffect(() => { saveMessages(messages) }, [messages])
+
+  // 恢复历史
   useEffect(() => {
     const stored = messages
       .filter(m => m.type === 'user' || m.type === 'mochi')
@@ -98,6 +102,7 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
     setHistory(stored)
   }, [])
 
+  // Quest 进场
   useEffect(() => {
     if (questRef.current) {
       gsap.fromTo(questRef.current,
@@ -107,6 +112,7 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
     }
   }, [])
 
+  // 自动滚到底部
   useEffect(() => {
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
   }, [messages])
@@ -142,14 +148,12 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
     })
   }
 
-  // 点击猫语气泡揭示翻译
   function revealTranslation(msgId: number) {
     setRevealedTrans(prev => {
       const next = new Set(prev)
       next.add(msgId)
       return next
     })
-    // 找到对应气泡做动画
     const el = document.getElementById(`cat-msg-${msgId}`)
     if (el) {
       gsap.fromTo(el, { scale: 0.97 }, { scale: 1, duration: 0.3, ease: 'elastic.out(1, 0.5)' })
@@ -168,18 +172,17 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
     msgCountRef.current++
 
     // ── 决定用猫语还是 AI ──────────────────
-    const currentMood = 'idle'  // 从父组件获取，这里用默认值
     const decision = decideResponseMode(
       text,
-      currentMood,
+      currentMood,          // 使用追踪的当前情绪
       state.trust,
-      activePet.id as PetId,          // ← 加这个
+      activePet.id as PetId,
       msgCountRef.current,
       lastAIRef.current,
     )
 
     if (decision.useCatLanguage && decision.catResponse) {
-      // ── 猫语回应（本地，80%）────────────
+      // ── 猫语回应（本地）────────────────
       setTimeout(() => {
         addMsg({
           type: 'cat',
@@ -192,10 +195,10 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
         onMochiReply?.(decision.catResponse!.translation)
         setLoading(false)
         rotateQuest()
-      }, 600 + Math.random() * 400)  // 轻微延迟，像真的在思考
+      }, 500 + Math.random() * 300)
 
     } else {
-      // ── AI 回应（Gemini，20%）────────────
+      // ── AI 回应（Gemini）───────────────
       lastAIRef.current = msgCountRef.current
       const newHistory = [...history, { role: 'user' as const, text }]
 
@@ -209,18 +212,29 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
 
         if (data.rateLimited) {
           // 限流时用猫语兜底
-          const fallback = getCombinedCatResponse(activePet.id as PetId, 'idle', state.trust, 'chat_reply')
-          addMsg({ type: 'cat', text: fallback.sounds.join('  '), catSounds: fallback.sounds, catTrans: fallback.translation })
+          const fallback = getCombinedCatResponse(
+            activePet.id as PetId, currentMood, state.trust, 'chat_reply'
+          )
+          addMsg({
+            type: 'cat',
+            text: fallback.sounds.join('  '),
+            catSounds: fallback.sounds,
+            catTrans: fallback.translation,
+          })
         } else {
-          const emotion = data.emotion || 'default'
+          const emotion: Mood = data.emotion || 'idle'
           const reply = data.reply
             || MOCHI_RESPONSES[emotion]?.[Math.floor(Math.random() * (MOCHI_RESPONSES[emotion]?.length || 1))]
             || MOCHI_RESPONSES.default[0]
+
+          // ── 更新当前情绪（用于下一条猫语的匹配）──
+          setCurrentMood(emotion)
 
           setHistory([...newHistory, { role: 'mochi', text: reply }])
           addMsg({ text: reply, type: 'mochi' })
           onMochiReply?.(reply)
 
+          // 情绪音效
           if (emotion === 'happy') playHappySound()
           else if (emotion === 'sad') playSadSound()
           else if (emotion === 'anxious') playAnxiousSound()
@@ -231,14 +245,26 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
         }
       } catch {
         const { detectEmotion } = await import('@/lib/emotionEngine')
-        const emotion = detectEmotion(text)
-        const list = MOCHI_RESPONSES[emotion] ?? MOCHI_RESPONSES.default
+
+        const rawEmotion = detectEmotion(text)
+
+        const emotion: Mood =
+          rawEmotion === 'default' ? 'idle' :
+            rawEmotion === 'angry' ? 'anxious' :
+              rawEmotion === 'calm' ? 'idle' :
+                rawEmotion
+
+        setCurrentMood(emotion)
+
+        const list = MOCHI_RESPONSES[rawEmotion] ?? MOCHI_RESPONSES.default
         const reply = list[Math.floor(Math.random() * list.length)]
+
         setHistory([...newHistory, { role: 'mochi', text: reply }])
         addMsg({ text: reply, type: 'mochi' })
+
         onMochiReply?.(reply)
-        onEmotionDetected?.(emotion)
-        onRewardGiven?.(giveReward(emotion as any))
+        onEmotionDetected?.(rawEmotion)
+        onRewardGiven?.(giveReward(rawEmotion as any))
       }
 
       setLoading(false)
@@ -261,8 +287,14 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
 
   function clearHistory() {
     localStorage.removeItem(STORAGE_KEY)
-    setMessages([{ id: idRef.current++, text: `✨ ${activePet.name} is listening...`, type: 'system', timestamp: Date.now() }])
+    setMessages([{
+      id: idRef.current++,
+      text: `✨ ${activePet.name} is listening...`,
+      type: 'system',
+      timestamp: Date.now(),
+    }])
     setHistory([])
+    setCurrentMood('idle')
   }
 
   function shouldShowDateSep(curr: Message, prev?: Message): boolean {
@@ -296,33 +328,65 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
 
       {/* 聊天区 */}
       <div style={{
-        flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0,
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
         background: 'linear-gradient(135deg, rgba(168,85,247,0.06), rgba(96,165,250,0.04))',
         border: '1.5px solid rgba(168,85,247,0.15)',
-        borderRadius: '20px', padding: '14px', gap: '10px', boxSizing: 'border-box',
+        borderRadius: '20px',
+        padding: '14px',
+        gap: '10px',
+        boxSizing: 'border-box',
       }}>
 
         {/* 顶部栏 */}
         {messages.filter(m => m.type !== 'system').length > 0 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(140,120,180,0.5)', letterSpacing: '0.06em' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexShrink: 0,
+          }}>
+            <span style={{
+              fontSize: '10px',
+              fontWeight: 700,
+              color: 'rgba(140,120,180,0.5)',
+              letterSpacing: '0.06em',
+            }}>
               {messages.filter(m => m.type !== 'system').length} messages saved
             </span>
-            <button onClick={clearHistory} style={{
-              background: 'none', border: '1px solid rgba(168,85,247,0.15)',
-              borderRadius: '8px', padding: '2px 8px', fontSize: '10px',
-              fontWeight: 700, color: 'rgba(140,120,180,0.5)', cursor: 'pointer',
-            }}>
+            <button
+              onClick={clearHistory}
+              style={{
+                background: 'none',
+                border: '1px solid rgba(168,85,247,0.15)',
+                borderRadius: '8px',
+                padding: '2px 8px',
+                fontSize: '10px',
+                fontWeight: 700,
+                color: 'rgba(140,120,180,0.5)',
+                cursor: 'pointer',
+              }}
+            >
               Clear
             </button>
           </div>
         )}
 
         {/* 消息列表 */}
-        <div ref={msgListRef} style={{
-          flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column',
-          gap: '6px', minHeight: 0, paddingRight: '4px',
-        }}>
+        <div
+          ref={msgListRef}
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px',
+            minHeight: 0,
+            paddingRight: '4px',
+          }}
+        >
           {messages.map((m, i) => {
             const prev = messages[i - 1]
             const showDateSep = shouldShowDateSep(m, prev)
@@ -330,12 +394,20 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
 
             return (
               <div key={m.id} className="msg-item">
-                {/* 日期分隔 */}
+
+                {/* 日期分隔线 */}
                 {showDateSep && m.type !== 'system' && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0 4px' }}>
                     <div style={{ flex: 1, height: '1px', background: 'rgba(168,85,247,0.1)' }} />
-                    <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(140,120,180,0.45)', whiteSpace: 'nowrap' }}>
-                      {new Date(m.timestamp).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}
+                    <span style={{
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      color: 'rgba(140,120,180,0.45)',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {new Date(m.timestamp).toLocaleDateString([], {
+                        weekday: 'short', month: 'short', day: 'numeric'
+                      })}
                     </span>
                     <div style={{ flex: 1, height: '1px', background: 'rgba(168,85,247,0.1)' }} />
                   </div>
@@ -352,7 +424,6 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
                       cursor: transShown ? 'default' : 'pointer',
                     }}
                   >
-                    {/* 猫语气泡 */}
                     <div style={{
                       background: 'linear-gradient(135deg, rgba(168,85,247,0.12), rgba(96,165,250,0.08))',
                       border: '1px solid rgba(168,85,247,0.2)',
@@ -362,7 +433,6 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
                       flexDirection: 'column',
                       gap: '4px',
                     }}>
-                      {/* 猫语文字 */}
                       <div style={{
                         fontFamily: "'Fredoka One', cursive",
                         fontSize: '14px',
@@ -372,7 +442,6 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
                         {m.catSounds?.join('  ') || m.text}
                       </div>
 
-                      {/* 翻译 — 点击后显示 */}
                       {transShown && m.catTrans ? (
                         <div style={{
                           fontSize: '11px',
@@ -405,15 +474,21 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
                     onClick={() => setShowDate(showDate === m.id ? null : m.id)}
                     style={{ cursor: 'pointer' }}
                   >
-                    {m.type === 'mochi' ? m.text.replace('🐱', activePet.emoji) : m.text}
+                    {m.type === 'mochi'
+                      ? m.text.replace('🐱', activePet.emoji)
+                      : m.text}
                   </div>
                 )}
 
                 {/* 时间戳 */}
                 {showDate === m.id && m.type !== 'system' && (
                   <div style={{
-                    fontSize: '10px', fontWeight: 600, color: 'rgba(140,120,180,0.45)',
-                    textAlign: m.type === 'user' ? 'right' : 'left', padding: '0 4px', marginTop: '-2px',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    color: 'rgba(140,120,180,0.45)',
+                    textAlign: m.type === 'user' ? 'right' : 'left',
+                    padding: '0 4px',
+                    marginTop: '-2px',
                   }}>
                     {formatTime(m.timestamp)}
                   </div>
@@ -427,6 +502,7 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
               <div className="loading-dots"><span /><span /><span /></div>
             </div>
           )}
+
           <div ref={bottomRef} />
         </div>
 
@@ -439,7 +515,10 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
             rows={1}
             onChange={e => setInput(e.currentTarget.value)}
             onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendDebounced() }
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSendDebounced()
+              }
             }}
             onInput={e => {
               const el = e.currentTarget
@@ -447,7 +526,11 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
               el.style.height = Math.min(el.scrollHeight, 120) + 'px'
             }}
           />
-          <button className="send-btn" onClick={handleSendClick} disabled={loading || !input.trim()}>
+          <button
+            className="send-btn"
+            onClick={handleSendClick}
+            disabled={loading || !input.trim()}
+          >
             ↑
           </button>
         </div>

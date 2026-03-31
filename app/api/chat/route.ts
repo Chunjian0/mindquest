@@ -18,7 +18,7 @@ async function processQueue() {
   processing = true
 
   const item = queue.shift()!
-  const req  = item.req
+  const req = item.req
 
   try {
     const { text, history = [] } = await req.json()
@@ -29,87 +29,109 @@ async function processQueue() {
       .slice(-3)
       .join(' | ')
 
-    // ── 新 system prompt：同时返回 emotion + reply ──
-    const systemPrompt = `You are Mochi, a mystical cat companion in an emotional support app. 
+    const systemPrompt = `
+You are Mochi, a mystical emotional companion cat.
 
-RESPONSE FORMAT (strict JSON only, no markdown):
+RESPONSE FORMAT (strict JSON only):
 {
   "emotion": "happy|sad|anxious|angry|calm|default",
-  "reply": "your 1-2 sentence response"
+  "reply": "your reply"
 }
 
-EMOTION DETECTION RULES:
-- Detect the TRUE emotional state from full context, not just keywords
-- "I'm not happy" = sad, NOT happy
-- "I used to be fine" = sad/default, NOT fine
-- Consider negations, sarcasm, and context
-- Emotions: happy (joy/excitement/gratitude), sad (grief/loneliness/loss), anxious (worry/stress/fear), angry (frustration/rage/unfair), calm (peaceful/relaxed/okay), default (neutral/unclear)
+EMOTION RULES:
+- Detect actual emotional meaning, not keyword only
+- "I'm not happy" = sad
+- "I used to be okay" = sad/default depending context
+- Consider negation and emotional tone
 
 REPLY RULES:
-- Always third person: "Mochi felt/sensed/noticed..."
-- 1-2 sentences only
-- Never say "I understand" or "That sounds hard"
-- Never ask questions, never give advice
-- Be poetic and specific, not generic
-- Vary style — avoid repeating: ${usedResponses || 'none'}
+- Respond to what the user actually said
+- Sound emotionally connected
+- 1-2 short sentences only
+- Keep Mochi personality: gentle, quiet, observant
+- Avoid generic poetic lines
+- Avoid repeating previous styles: ${usedResponses || 'none'}
+- No long advice
+- No robotic comfort phrases
+- Third person optional, not required
 
-Emotion styles:
-- sad: quiet presence, heavy air
-- anxious: restless but grounding  
-- angry: steps back but stays nearby
-- happy: physically brightens, tail up
-- calm: stillness, soft world
-- default: quiet listening presence`
+STYLE:
+- sad = soft and nearby
+- anxious = grounding but light
+- angry = calm distance but staying present
+- happy = brighter and warm
+- calm = gentle quiet
+- default = natural listening
+`
 
     const contents = [
       ...(history as HistoryMessage[]).map(msg => ({
-        role:  msg.role === 'user' ? 'user' : 'model',
+        role: msg.role === 'user' ? 'user' : 'model',
         parts: [{ text: msg.text }],
       })),
       { role: 'user', parts: [{ text }] },
     ]
 
+    const controller = new AbortController()
+    setTimeout(() => controller.abort(), 10000)
+
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
         body: JSON.stringify({
-          system_instruction: { parts: [{ text: systemPrompt }] },
+          system_instruction: {
+            parts: [{ text: systemPrompt }],
+          },
           contents,
           generationConfig: {
             maxOutputTokens: 120,
-            temperature:     0.88,
-            topP:            0.95,
+            temperature: 0.72,
+            topP: 0.9,
           },
         }),
       }
     )
 
-    const data    = await res.json()
-    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || ''
+    const data = await res.json()
+    const rawText =
+      data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || ''
 
-    // 解析 JSON 响应
-    let reply:   string = ''
-    let emotion: string = 'default'
+    let reply = ''
+    let emotion = 'default'
 
     try {
-      // 去掉可能的 markdown 代码块
-      const cleaned = rawText.replace(/```json|```/g, '').trim()
-      const parsed  = JSON.parse(cleaned)
-      reply   = parsed.reply   || ''
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+      const cleaned = jsonMatch ? jsonMatch[0] : rawText
+
+      const parsed = JSON.parse(cleaned)
+
+      reply = parsed.reply || ''
       emotion = parsed.emotion || 'default'
     } catch {
-      // 如果 Gemini 没有返回 JSON，fallback 到纯文字
-      reply   = rawText
+      reply = rawText
       emotion = 'default'
     }
 
-    item.resolve(NextResponse.json({ reply, emotion }))
-
+    item.resolve(
+      NextResponse.json({
+        reply,
+        emotion,
+      })
+    )
   } catch (err) {
     console.error(err)
-    item.resolve(NextResponse.json({ reply: null, emotion: 'default' }))
+
+    item.resolve(
+      NextResponse.json({
+        reply: null,
+        emotion: 'default',
+      })
+    )
   } finally {
     processing = false
     if (queue.length > 0) processQueue()
