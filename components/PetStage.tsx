@@ -402,6 +402,7 @@ function spawnParticles() {
   }
 }
 
+// ──StatBar ──────────────────────
 function GameStatBar({
   label,
   value,
@@ -409,57 +410,174 @@ function GameStatBar({
   type,
   barRef,
 }: {
-  label: string
-  value: number
-  max: number
-  type: string
+  label:  string
+  value:  number
+  max:    number
+  type:   string
   barRef: React.RefObject<HTMLDivElement | null>
 }) {
-  const gradients: Record<string, string> = {
-    exp: 'linear-gradient(90deg, #7c3aed, #a855f7)',
-    trust: 'linear-gradient(90deg, #0891b2, #22d3ee)',
-    energy: 'linear-gradient(90deg, #d97706, #fbbf24)',
+  const TOTAL_CELLS = 14
+  const filledCount = Math.round((value / max) * TOTAL_CELLS)
+  const pct         = Math.round((value / max) * 100)
+
+  // 颜色配置
+  const config: Record<string, {
+    icon:        string
+    labelColor:  string
+    fillGrad:    string
+    glowColor:   string
+    shimmer:     string
+    isLow?:      boolean
+  }> = {
+    exp: {
+      icon:       '⚡',
+      labelColor: 'rgba(192,132,252,0.85)',
+      fillGrad:   'linear-gradient(180deg, #c084fc 0%, #7c3aed 100%)',
+      glowColor:  'rgba(168,85,247,0.6)',
+      shimmer:    'rgba(255,255,255,0.22)',
+    },
+    trust: {
+      icon:       '💙',
+      labelColor: 'rgba(34,211,238,0.85)',
+      fillGrad:   'linear-gradient(180deg, #22d3ee 0%, #0891b2 100%)',
+      glowColor:  'rgba(34,211,238,0.6)',
+      shimmer:    'rgba(255,255,255,0.2)',
+    },
+    energy: {
+      icon:       '🔥',
+      labelColor: value > 20
+        ? 'rgba(251,191,36,0.85)'
+        : 'rgba(239,68,68,0.95)',
+      fillGrad:   value > 50
+        ? 'linear-gradient(180deg, #fbbf24 0%, #d97706 100%)'
+        : value > 20
+          ? 'linear-gradient(180deg, #f59e0b 0%, #b45309 100%)'
+          : 'linear-gradient(180deg, #ef4444 0%, #991b1b 100%)',
+      glowColor:  value > 20
+        ? 'rgba(251,191,36,0.6)'
+        : 'rgba(239,68,68,0.7)',
+      shimmer:    'rgba(255,255,255,0.2)',
+      isLow:      value <= 20,
+    },
   }
 
+  const cfg = config[type] || config.exp
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          fontSize: '10px',
-          fontWeight: 800,
-          letterSpacing: '0.08em',
-          color: 'rgba(200,180,240,0.85)',
-          fontFamily: "'Fredoka One', cursive",
-        }}
-      >
-        <span>{label}</span>
-        <span style={{ fontSize: '9px', opacity: 0.8 }}>
-          {value}/{max}
-        </span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+
+      {/* 标签行 */}
+      <div style={{
+        display:        'flex',
+        justifyContent: 'space-between',
+        alignItems:     'center',
+      }}>
+        <div style={{
+          display:       'flex',
+          alignItems:    'center',
+          gap:           '4px',
+          fontSize:      '10px',
+          fontWeight:    800,
+          color:         cfg.labelColor,
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          fontFamily:    "'Courier New', monospace",
+        }}>
+          <span style={{ fontSize: '11px' }}>{cfg.icon}</span>
+          {label}
+          {/* 低能量警告标签 */}
+          {cfg.isLow && (
+            <span style={{
+              fontSize:     '8px',
+              color:        'rgba(239,68,68,0.8)',
+              background:   'rgba(239,68,68,0.1)',
+              border:       '1px solid rgba(239,68,68,0.25)',
+              borderRadius: '4px',
+              padding:      '0px 4px',
+              letterSpacing:'0.08em',
+              animation:    'lowPulse 1.2s ease-in-out infinite alternate',
+            }}>
+              LOW
+            </span>
+          )}
+        </div>
+
+        {/* 数值 */}
+        <div style={{
+          fontFamily: "'Courier New', monospace",
+          fontSize:   '11px',
+          fontWeight: 700,
+          color:      cfg.isLow
+            ? 'rgba(239,68,68,0.85)'
+            : 'rgba(200,185,240,0.7)',
+        }}>
+          {value}
+          <span style={{ fontSize: '9px', opacity: 0.45, marginLeft: '1px' }}>
+            /{max}
+          </span>
+        </div>
       </div>
 
-      <div
-        style={{
-          height: '8px',
-          background: 'rgba(255,255,255,0.06)',
-          borderRadius: '999px',
-          overflow: 'hidden',
-          border: '1px solid rgba(255,255,255,0.04)',
-        }}
-      >
-        <div
-          ref={barRef}
-          style={{
-            width: `${(value / max) * 100}%`,
-            height: '100%',
-            background: gradients[type],
-            borderRadius: '999px',
-            boxShadow: `0 0 8px rgba(255,255,255,0.15)`,
-          }}
-        />
+      {/* 像素格进度条 */}
+      <div style={{
+        display:    'flex',
+        gap:        '2.5px',
+        alignItems: 'center',
+        height:     '12px',
+      }}>
+        {Array.from({ length: TOTAL_CELLS }, (_, i) => {
+          const isFilled = i < filledCount
+
+          return (
+            <div
+              key={i}
+              style={{
+                flex:         1,
+                height:       '12px',
+                borderRadius: '2px',
+                position:     'relative',
+                overflow:     'hidden',
+                background:   isFilled
+                  ? cfg.fillGrad
+                  : 'rgba(255,255,255,0.05)',
+                border:       isFilled
+                  ? 'none'
+                  : '1px solid rgba(255,255,255,0.04)',
+                boxShadow:    isFilled
+                  ? `0 0 4px ${cfg.glowColor}, inset 0 -2px 0 rgba(0,0,0,0.3)`
+                  : 'none',
+                // 轻微交错动画延迟，有填满感
+                transition:   `background 0.3s ease ${i * 0.015}s, box-shadow 0.3s ease`,
+              }}
+            >
+              {/* 顶部高光（像素感）*/}
+              {isFilled && (
+                <div style={{
+                  position:     'absolute',
+                  top:          0,
+                  left:         0,
+                  right:        0,
+                  height:       '3px',
+                  background:   cfg.shimmer,
+                  borderRadius: '2px 2px 0 0',
+                }} />
+              )}
+            </div>
+          )
+        })}
       </div>
+
+      {/* 隐藏的 div 给 GSAP 用 */}
+      <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0 }}>
+        <div ref={barRef} style={{ width: `${pct}%` }} />
+      </div>
+
+      <style>{`
+        @keyframes lowPulse {
+          from { opacity: 0.6; }
+          to   { opacity: 1;   }
+        }
+      `}</style>
     </div>
   )
 }
