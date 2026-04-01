@@ -209,6 +209,7 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
           body: JSON.stringify({ text, history: newHistory.slice(-6) }),
         })
         const data = await res.json()
+        console.log('AI reply raw:', data)
 
         if (data.rateLimited) {
           // 限流时用猫语兜底
@@ -222,16 +223,32 @@ export default function ChatBox({ onEmotionDetected, onRewardGiven, onMochiReply
             catTrans: fallback.translation,
           })
         } else {
-          const emotion: Mood = data.emotion || 'idle'
-          const reply = data.reply
-            || MOCHI_RESPONSES[emotion]?.[Math.floor(Math.random() * (MOCHI_RESPONSES[emotion]?.length || 1))]
-            || MOCHI_RESPONSES.default[0]
+          const rawEmotion = data.emotion
 
-          // ── 更新当前情绪（用于下一条猫语的匹配）──
+          const emotion: Mood =
+            rawEmotion === 'default' ? 'idle' :
+              rawEmotion === 'angry' ? 'anxious' :
+                rawEmotion === 'calm' ? 'calm' :
+                  rawEmotion || 'idle'
+
+          const reply =
+            typeof data.reply === 'string' && data.reply.trim().length > 0
+              ? data.reply
+              : MOCHI_RESPONSES[rawEmotion]?.[
+              Math.floor(Math.random() * (MOCHI_RESPONSES[rawEmotion]?.length || 1))
+              ] || MOCHI_RESPONSES.default[0]
+
           setCurrentMood(emotion)
 
-          setHistory([...newHistory, { role: 'mochi', text: reply }])
-          addMsg({ text: reply, type: 'mochi' })
+          const updatedHistory: HistoryEntry[] = [
+            ...newHistory,
+            {
+              role: 'mochi' as const,
+              text: reply,
+            }
+          ]
+
+          setHistory(updatedHistory)
           onMochiReply?.(reply)
 
           // 情绪音效
