@@ -404,11 +404,7 @@ function spawnParticles() {
 
 // ── 像素游戏风格 StatBar（MindQuest 主题）──────
 function GameStatBar({
-  label,
-  value,
-  max,
-  type,
-  barRef,
+  label, value, max, type, barRef,
 }: {
   label:  string
   value:  number
@@ -416,50 +412,44 @@ function GameStatBar({
   type:   string
   barRef: React.RefObject<HTMLDivElement | null>
 }) {
-  const TOTAL_CELLS = 12
-  const filledCount = Math.round((value / max) * TOTAL_CELLS)
-  const pct         = Math.round((value / max) * 100)
+  const pct = Math.max(0, Math.min(100, Math.round((value / max) * 100)))
 
   const config: Record<string, {
-    icon:       string
-    labelColor: string
-    fillColor:  string          // 方块主色
-    fillShade:  string          // 方块暗色（右侧/底部）
-    emptyColor: string          // 空格子颜色
-    borderColor: string         // 外框颜色
-    glowColor:  string
-    isLow?:     boolean
+    icon:        string
+    labelColor:  string
+    barGradient: string
+    glowColor:   string
+    trackColor:  string
+    borderColor: string
+    isLow?:      boolean
   }> = {
     exp: {
       icon:        '★',
       labelColor:  '#d580ff',
-      fillColor:   '#c84cff',
-      fillShade:   '#7a1cbf',
-      emptyColor:  '#1e1430',
-      borderColor: '#6b21a8',
-      glowColor:   'rgba(200,76,255,0.5)',
+      barGradient: 'linear-gradient(90deg, #7c1cbf 0%, #c84cff 60%, #e0a0ff 100%)',
+      glowColor:   'rgba(200,76,255,0.55)',
+      trackColor:  'rgba(100,40,160,0.2)',
+      borderColor: 'rgba(107,33,168,0.5)',
     },
     trust: {
       icon:        '♥',
       labelColor:  '#4dd9f5',
-      fillColor:   '#22c8e8',
-      fillShade:   '#0e6ea8',
-      emptyColor:  '#0e1e2a',
-      borderColor: '#0e7490',
-      glowColor:   'rgba(34,200,232,0.5)',
+      barGradient: 'linear-gradient(90deg, #0e6ea8 0%, #22c8e8 60%, #80eeff 100%)',
+      glowColor:   'rgba(34,200,232,0.55)',
+      trackColor:  'rgba(14,110,168,0.2)',
+      borderColor: 'rgba(14,116,144,0.5)',
     },
     energy: {
       icon:        '◆',
       labelColor:  value > 20 ? '#ffd24d' : '#ff5555',
-      fillColor:   value > 50
-        ? '#ffcc00'
-        : value > 20 ? '#e8890a' : '#ff3333',
-      fillShade:   value > 50
-        ? '#cc7700'
-        : value > 20 ? '#994400' : '#991111',
-      emptyColor:  '#1a1408',
-      borderColor: value > 20 ? '#854d0e' : '#7f1d1d',
-      glowColor:   value > 20 ? 'rgba(255,204,0,0.5)' : 'rgba(255,51,51,0.6)',
+      barGradient: value > 50
+        ? 'linear-gradient(90deg, #cc7700 0%, #ffcc00 60%, #ffe880 100%)'
+        : value > 20
+          ? 'linear-gradient(90deg, #994400 0%, #e8890a 60%, #ffb040 100%)'
+          : 'linear-gradient(90deg, #991111 0%, #ff3333 60%, #ff8080 100%)',
+      glowColor:   value > 20 ? 'rgba(255,204,0,0.55)' : 'rgba(255,51,51,0.65)',
+      trackColor:  value > 20 ? 'rgba(180,120,0,0.15)'  : 'rgba(180,30,30,0.2)',
+      borderColor: value > 20 ? 'rgba(133,77,14,0.5)'   : 'rgba(127,29,29,0.5)',
       isLow:       value <= 20,
     },
   }
@@ -467,22 +457,18 @@ function GameStatBar({
   const cfg = config[type] || config.exp
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
 
-      {/* 标签行 — 像素字体感 */}
-      <div style={{
-        display:        'flex',
-        justifyContent: 'space-between',
-        alignItems:     'center',
-      }}>
+      {/* 标签行 */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={{
-          fontFamily:    "'Courier New', 'Press Start 2P', monospace",
+          fontFamily:    "'Courier New', monospace",
           fontSize:      '9px',
           fontWeight:    900,
           color:         cfg.labelColor,
-          letterSpacing: '0.15em',
+          letterSpacing: '0.14em',
           textTransform: 'uppercase',
-          textShadow:    `0 0 6px ${cfg.glowColor}`,
+          textShadow:    `0 0 8px ${cfg.glowColor}`,
           display:       'flex',
           alignItems:    'center',
           gap:           '4px',
@@ -493,9 +479,9 @@ function GameStatBar({
             <span style={{
               fontSize:     '7px',
               color:        '#ff5555',
-              background:   'rgba(255,0,0,0.1)',
+              background:   'rgba(255,0,0,0.12)',
               border:       '1px solid rgba(255,0,0,0.3)',
-              borderRadius: '2px',
+              borderRadius: '3px',
               padding:      '0 3px',
               letterSpacing:'0.1em',
               animation:    'lowPulse 0.8s step-end infinite',
@@ -506,98 +492,63 @@ function GameStatBar({
         </span>
 
         <span style={{
-          fontFamily: "'Courier New', monospace",
-          fontSize:   '9px',
-          fontWeight: 700,
-          color:      cfg.isLow ? '#ff5555' : 'rgba(180,160,220,0.65)',
-          letterSpacing: '0.05em',
+          fontFamily:    "'Courier New', monospace",
+          fontSize:      '9px',
+          fontWeight:    700,
+          color:         cfg.isLow ? '#ff5555' : 'rgba(180,160,220,0.65)',
+          letterSpacing: '0.04em',
         }}>
-          {value}/{max}
+          {value}
+          <span style={{ fontSize: '8px', opacity: 0.4, marginLeft: '1px' }}>/{max}</span>
         </span>
       </div>
 
-      {/* 像素进度条容器 — 粗边框 */}
+      {/* 平滑连续进度条 */}
       <div style={{
-        position:    'relative',
-        padding:     '3px',
-        borderRadius:'3px',
-        background:  'rgba(0,0,0,0.6)',
-        // 双层边框：外层深色 + 内层亮边（像素风格）
-        border:       `2px solid ${cfg.borderColor}`,
-        boxShadow:    `
-          inset 1px 1px 0 rgba(255,255,255,0.08),
-          inset -1px -1px 0 rgba(0,0,0,0.5),
-          0 0 8px ${cfg.glowColor}
-        `,
+        position:     'relative',
+        height:       '10px',
+        borderRadius: '99px',
+        background:   cfg.trackColor,
+        border:       `1px solid ${cfg.borderColor}`,
+        overflow:     'hidden',
+        boxShadow:    `inset 0 1px 3px rgba(0,0,0,0.4), 0 0 8px ${cfg.glowColor.replace('0.55','0.15')}`,
       }}>
+        {/* 填充条 */}
+        <div
+          ref={barRef}
+          style={{
+            position:     'absolute',
+            top:          0, left: 0, bottom: 0,
+            width:        `${pct}%`,
+            borderRadius: '99px',
+            background:   cfg.barGradient,
+            boxShadow:    `0 0 10px ${cfg.glowColor}, 0 0 4px ${cfg.glowColor}`,
+            transition:   'width 0.8s cubic-bezier(0.34,1.56,0.64,1)',
+          }}
+        />
 
-        {/* 格子行 */}
+        {/* 顶部高光 */}
         <div style={{
-          display: 'flex',
-          gap:     '2px',
-          height:  '10px',
-        }}>
-          {Array.from({ length: TOTAL_CELLS }, (_, i) => {
-            const isFilled = i < filledCount
+          position:     'absolute',
+          top:          0, left: 0, right: 0,
+          height:       '4px',
+          borderRadius: '99px 99px 0 0',
+          background:   'rgba(255,255,255,0.12)',
+          pointerEvents:'none',
+        }} />
 
-            return (
-              <div
-                key={i}
-                style={{
-                  flex:         1,
-                  height:       '100%',
-                  borderRadius: '1px',
-                  position:     'relative',
-                  overflow:     'hidden',
-
-                  // 填充格子 — 模拟像素风格的双色
-                  background:   isFilled
-                    ? cfg.fillColor
-                    : cfg.emptyColor,
-
-                  // 像素风阴影（右边和底部暗色）
-                  boxShadow:    isFilled
-                    ? `inset -1px -2px 0 ${cfg.fillShade}, inset 1px 1px 0 rgba(255,255,255,0.25)`
-                    : `inset 1px 1px 0 rgba(255,255,255,0.03)`,
-
-                  transition: `background 0.15s ease ${i * 0.02}s`,
-                }}
-              >
-                {/* 顶部高光条 */}
-                {isFilled && (
-                  <div style={{
-                    position:   'absolute',
-                    top:        0,
-                    left:       0,
-                    right:      0,
-                    height:     '3px',
-                    background: 'rgba(255,255,255,0.3)',
-                  }} />
-                )}
-              </div>
-            )
-          })}
-        </div>
-
-        {/* 进度条扫描线效果 */}
-        {filledCount > 0 && (
+        {/* 扫描光 */}
+        {pct > 0 && (
           <div style={{
-            position:   'absolute',
-            top:        '3px',
-            left:       '3px',
-            width:      `calc(${(filledCount / TOTAL_CELLS) * 100}% - 3px)`,
-            height:     '10px',
-            background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%)`,
-            animation:  'scanline 2s linear infinite',
-            pointerEvents: 'none',
-            borderRadius: '1px',
+            position:     'absolute',
+            top:          0, bottom: 0,
+            width:        '40px',
+            background:   'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+            borderRadius: '99px',
+            animation:    'barScan 2.5s linear infinite',
+            left:         `-40px`,
           }} />
         )}
-      </div>
-
-      {/* GSAP 隐藏 ref */}
-      <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0 }}>
-        <div ref={barRef} style={{ width: `${pct}%` }} />
       </div>
 
       <style>{`
@@ -605,9 +556,9 @@ function GameStatBar({
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
         }
-        @keyframes scanline {
-          from { transform: translateX(-100%); }
-          to   { transform: translateX(200%);  }
+        @keyframes barScan {
+          from { transform: translateX(0); }
+          to   { transform: translateX(calc(${pct}vw)); }
         }
       `}</style>
     </div>

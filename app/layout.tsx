@@ -1,31 +1,32 @@
 'use client'
 
 import './globals.css'
-import Link                         from 'next/link'
-import { usePathname }              from 'next/navigation'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useRef, useEffect, useState } from 'react'
-import gsap                         from 'gsap'
-import WorldLayer                   from '@/components/WorldLayer'
-import DataLostBanner               from '@/components/DataLostBanner'
-import ErrorBoundary                from '@/components/ErrorBoundary'
-import { GameProvider, useGame }    from '@/lib/gameContext'
+import gsap from 'gsap'
+import WorldLayer from '@/components/WorldLayer'
+import DataLostBanner from '@/components/DataLostBanner'
+import ErrorBoundary from '@/components/ErrorBoundary'
+import { GameProvider, useGame } from '@/lib/gameContext'
+import ThemeSwitcher from '@/components/ThemeSwitcher'
 
 const NAV_TABS = [
-  { href: '/',          label: 'Home',  icon: '🏠' },
-  { href: '/pets',      label: 'Pets',  icon: '🐾' },
+  { href: '/', label: 'Home', icon: '🏠' },
+  { href: '/pets', label: 'Pets', icon: '🐾' },
   { href: '/adventure', label: 'Quest', icon: '⚔️' },
-  { href: '/shop',      label: 'Shop',  icon: '🛍️' },
+  { href: '/shop', label: 'Shop', icon: '🛍️' },
 ]
 
 function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname    = usePathname()
-  const { state }   = useGame()
-  const mainRef     = useRef<HTMLElement>(null)
-  const coinRef     = useRef<HTMLDivElement>(null)
-  const menuRef     = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
+  const { state } = useGame()
+  const mainRef = useRef<HTMLElement>(null)
+  const coinRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const hamburgerRef = useRef<HTMLButtonElement>(null)
-  const prevCoins   = useRef(state.coins)
-  const prevPath    = useRef(pathname)
+  const prevCoins = useRef(state.coins)
+  const prevPath = useRef(pathname)
 
   const [menuOpen, setMenuOpen] = useState(false)
   const hideNav = pathname === '/welcome'
@@ -41,7 +42,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
       if (!mainRef.current) return
       gsap.fromTo(mainRef.current,
         { opacity: 0, y: 10, scale: 0.992 },
-        { opacity: 1, y: 0,  scale: 1, duration: 0.4, ease: 'power3.out' }
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: 'power3.out' }
       )
     })
   }, [pathname])
@@ -64,7 +65,8 @@ function AppShell({ children }: { children: React.ReactNode }) {
     if (menuOpen) {
       gsap.fromTo(menuRef.current,
         { opacity: 0, y: -12, scaleY: 0.92 },
-        { opacity: 1, y: 0,   scaleY: 1,
+        {
+          opacity: 1, y: 0, scaleY: 1,
           duration: 0.3, ease: 'back.out(1.4)',
           transformOrigin: 'top center',
         }
@@ -73,15 +75,16 @@ function AppShell({ children }: { children: React.ReactNode }) {
       if (hamburgerRef.current) {
         const lines = hamburgerRef.current.querySelectorAll('.hb-line')
         if (lines[0] && lines[1] && lines[2]) {
-          gsap.to(lines[0], { rotation: 45,  y: 6,  duration: 0.25 })
-          gsap.to(lines[1], { opacity: 0,         duration: 0.15 })
+          gsap.to(lines[0], { rotation: 45, y: 6, duration: 0.25 })
+          gsap.to(lines[1], { opacity: 0, duration: 0.15 })
           gsap.to(lines[2], { rotation: -45, y: -6, duration: 0.25 })
         }
       }
     } else {
       if (!menuRef.current) return
       gsap.to(menuRef.current,
-        { opacity: 0, y: -8, scaleY: 0.95,
+        {
+          opacity: 0, y: -8, scaleY: 0.95,
           duration: 0.2, ease: 'power2.in',
           transformOrigin: 'top center',
         }
@@ -91,7 +94,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
         const lines = hamburgerRef.current.querySelectorAll('.hb-line')
         if (lines[0] && lines[1] && lines[2]) {
           gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.25 })
-          gsap.to(lines[1], { opacity: 1,        duration: 0.15 })
+          gsap.to(lines[1], { opacity: 1, duration: 0.15 })
           gsap.to(lines[2], { rotation: 0, y: 0, duration: 0.25 })
         }
       }
@@ -132,7 +135,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* ── Nav ── */}
       <nav style={{ position: 'relative', zIndex: 100 }}>
-        <div className="nav-logo">MindQuest ✦</div>
+        <div className="nav-logo">MindQuest</div>
 
         {/* 桌面 tabs */}
         <div className="nav-tabs desktop-tabs">
@@ -148,10 +151,14 @@ function AppShell({ children }: { children: React.ReactNode }) {
           ))}
         </div>
 
-        {/* 右边：硬币 + 汉堡按钮 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div ref={coinRef} className="coin-display">
             🪙 {state.coins}
+          </div>
+
+          {/* 主题切换 — 和硬币之间 16px 间距 */}
+          <div style={{ marginLeft: '8px' }}>
+            <ThemeSwitcher />
           </div>
 
           {/* 汉堡按钮 — 只在手机显示 */}
@@ -161,29 +168,29 @@ function AppShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMenuOpen(o => !o)}
             aria-label="Menu"
             style={{
-              display:        'none',   // 桌面隐藏，CSS 在 mobile 打开
-              flexDirection:  'column',
+              display: 'none',   // 桌面隐藏，CSS 在 mobile 打开
+              flexDirection: 'column',
               justifyContent: 'center',
-              alignItems:     'center',
-              gap:            '5px',
-              width:          '36px',
-              height:         '36px',
-              background:     'rgba(168,85,247,0.12)',
-              border:         '1px solid rgba(168,85,247,0.25)',
-              borderRadius:   '10px',
-              cursor:         'pointer',
-              padding:        '8px',
+              alignItems: 'center',
+              gap: '5px',
+              width: '36px',
+              height: '36px',
+              background: 'rgba(168,85,247,0.12)',
+              border: '1px solid rgba(168,85,247,0.25)',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              padding: '8px',
             }}
           >
-            {[0,1,2].map(i => (
+            {[0, 1, 2].map(i => (
               <span
                 key={i}
                 className="hb-line"
                 style={{
-                  display:      'block',
-                  width:        '18px',
-                  height:       '2px',
-                  background:   'rgba(200,180,255,0.85)',
+                  display: 'block',
+                  width: '18px',
+                  height: '2px',
+                  background: 'rgba(200,180,255,0.85)',
                   borderRadius: '2px',
                   transformOrigin: 'center',
                 }}
@@ -198,19 +205,19 @@ function AppShell({ children }: { children: React.ReactNode }) {
         ref={menuRef}
         className="mobile-menu"
         style={{
-          display:       'none',    // CSS 在 mobile 打开
-          position:      'absolute',
-          top:           '68px',
-          left:          0,
-          right:         0,
-          zIndex:        99,
-          background:    'rgba(10,8,26,0.97)',
-          borderBottom:  '1px solid rgba(168,85,247,0.15)',
-          backdropFilter:'blur(16px)',
-          padding:       '8px 16px 16px',
+          display: 'none',    // CSS 在 mobile 打开
+          position: 'absolute',
+          top: '68px',
+          left: 0,
+          right: 0,
+          zIndex: 99,
+          background: 'rgba(10,8,26,0.97)',
+          borderBottom: '1px solid rgba(168,85,247,0.15)',
+          backdropFilter: 'blur(16px)',
+          padding: '8px 16px 16px',
           flexDirection: 'column',
-          gap:           '4px',
-          opacity:       0,           // 初始隐藏
+          gap: '4px',
+          opacity: 0,           // 初始隐藏
           pointerEvents: menuOpen ? 'all' : 'none',
         }}
       >
@@ -220,26 +227,26 @@ function AppShell({ children }: { children: React.ReactNode }) {
             href={tab.href}
             onClick={() => setMenuOpen(false)}
             style={{
-              display:       'flex',
-              alignItems:    'center',
-              gap:           '12px',
-              padding:       '12px 16px',
-              borderRadius:  '12px',
-              background:    pathname === tab.href
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: '12px',
+              background: pathname === tab.href
                 ? 'linear-gradient(135deg, rgba(168,85,247,0.2), rgba(96,165,250,0.12))'
                 : 'transparent',
-              border:        pathname === tab.href
+              border: pathname === tab.href
                 ? '1px solid rgba(168,85,247,0.3)'
                 : '1px solid transparent',
-              color:         pathname === tab.href
+              color: pathname === tab.href
                 ? 'rgba(200,180,255,0.95)'
                 : 'rgba(160,140,200,0.7)',
-              fontFamily:    "'Nunito', sans-serif",
-              fontSize:      '15px',
-              fontWeight:    700,
-              textDecoration:'none',
-              transition:    'all 0.15s',
-              animationDelay:`${i * 0.05}s`,
+              fontFamily: "'Nunito', sans-serif",
+              fontSize: '15px',
+              fontWeight: 700,
+              textDecoration: 'none',
+              transition: 'all 0.15s',
+              animationDelay: `${i * 0.05}s`,
             }}
           >
             <span style={{ fontSize: '18px' }}>{tab.icon}</span>
@@ -269,11 +276,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-        <meta name="theme-color"                           content="#0a0816" />
-        <meta name="mobile-web-app-capable"                content="yes"    />
-        <meta name="apple-mobile-web-app-capable"          content="yes"    />
+        <meta name="theme-color" content="#0a0816" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title"            content="MindQuest" />
+        <meta name="apple-mobile-web-app-title" content="MindQuest" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap"
