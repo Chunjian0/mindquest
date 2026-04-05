@@ -41,18 +41,19 @@ https://github.com/Chunjian0/mindquest
 <img width="1920" height="991" alt="Screenshot (73)" src="https://github.com/user-attachments/assets/88e3e550-5aa3-476c-bd6b-edecf82ac5f1" />
 
 [Home Screen]
-<img width="1920" height="996" alt="Screenshot (86)" src="https://github.com/user-attachments/assets/057f7389-3074-4109-9e8d-7091716294d4" />
+<img width="1920" height="1001" alt="Screenshot (87)" src="https://github.com/user-attachments/assets/bdf67cd1-7b6e-4158-abdb-3ad51b4097dd" />
 
 [Pet System]
-<img width="1920" height="987" alt="Screenshot (80)" src="https://github.com/user-attachments/assets/760bac97-6dd1-425c-b2ea-7ed606669814" />
+<img width="1920" height="1002" alt="Screenshot (88)" src="https://github.com/user-attachments/assets/a8e046a7-1195-4a6c-82a7-5a7dd3d0e31c" />
 
 [Quest System]
-<img width="1920" height="983" alt="Screenshot (81)" src="https://github.com/user-attachments/assets/2777f7b1-1288-48d7-8013-afdd166bbdd1" />
+<img width="1920" height="965" alt="Screenshot (89)" src="https://github.com/user-attachments/assets/45f92c6a-3fb7-4181-a298-20488bf8ad0a" />
 
 [Shop System]
-<img width="1920" height="980" alt="Screenshot (82)" src="https://github.com/user-attachments/assets/29d42ae8-cde0-4d32-aaf5-8a6648f0c64e" />
+<img width="1920" height="986" alt="Screenshot (90)" src="https://github.com/user-attachments/assets/00505472-ad5e-44d4-bffa-05cde82fd2f1" />
 
-
+[Theme Switching]
+<img width="293" height="476" alt="Screenshot (91)" src="https://github.com/user-attachments/assets/3c10bebc-70c7-46f5-b6d7-e8ce788852a1" />
 
 
 
